@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "185270246643",
+    "project_id": "attendly-mobile",
+    "storage_bucket": "attendly-mobile.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:185270246643:android:c54ac8006c1c9dd3f76b86",
+        "android_client_info": {
+          "package_name": "com.neythuaung.attendly"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAf7nvqaWUYLhZRbJ3Ii-fDknvYjtagato"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

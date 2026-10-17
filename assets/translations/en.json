@@ -1,0 +1,12 @@
+{
+  "app_name": "Attendly",
+  "welcome_title": "Welcome to Attendly",
+  "welcome_subtitle": "Seamless employee attendance tracking and management with role-based dashboard.",
+  "login_to_your_account": "Log in to your account",
+  "create_an_account": "Create an account",
+  "select": "Select Language",
+  "change": "Change",
+  "english": "English",
+  "myanmar": "မြန်မာ",
+  "can_change_anytime": "You can change this anytime in settings."
+}

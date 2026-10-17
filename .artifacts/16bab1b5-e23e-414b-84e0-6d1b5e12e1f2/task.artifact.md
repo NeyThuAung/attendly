@@ -1,0 +1,37 @@
+# Step-by-Step Implementation Tasks
+
+- `[x]` Phase 1: Core Documentation, Dependencies & Firebase Setup Task
+  - `[x]` Create root `DOCUMENTATION.md` file
+  - `[x]` Update `pubspec.yaml` with all core dependencies (`flutter_bloc`, `go_router`, `drift`, `get_it`, `injectable`, `firebase_core`, `firebase_auth`, `cloud_firestore`, `firebase_storage`, `geolocator`, `freezed_annotation`, etc.)
+  - `[x]` Configure `flutter_flavorizr` for `local`, `staging`, and `prod` product flavors
+  - `[x]` Create `flavors.dart` and `lib/config/env_config.dart`
+  - `[x]` 🔥 Perform Firebase setup task: Create `firebase_options.dart`, initialize `Firebase.initializeApp()` in `main.dart`, and configure Firestore collections (`users`, `attendance_logs`)
+- `[x]` Phase 2: Dependency Injection & Core Infrastructure
+  - `[x]` Implement `lib/di/injector.dart` and `@module` registrations for Firebase, Drift, and Storage
+  - `[x]` Implement `UseCase<T, Param>`, `DataState<T>`, and `Failure` hierarchy
+  - `[x]` Implement `$styles` Design System (`AppStyles`, `AppColors`, `AppTypography`, `$styles.light`, `$styles.dark`)
+  - `[x]` Implement Core Extensions (`context.dart`, `sized_box.dart`, `opacity.dart`, `date_time.dart`) and `SnackShower`
+- `[x]` Phase 3: Offline Database & Location Engine
+  - `[x]` Implement Drift SQLite Database (`AppDatabase`) with `OfflineAttendanceLogs` table
+  - `[x]` Implement `LocationService` wrapper using `geolocator` and `geocoding`
+- `[x]` Phase 4: Navigation Router & vizCard-Style Bottom Navigation
+  - `[x]` Implement `NavigationRouter` using `go_router` and `AuthenticationRouterNotifier`
+  - `[x]` Implement `IndexPage` with `IndexedStack` and `ModernBottomNavBar`
+- `[x]` Phase 5: Auth Feature Module (`features/auth/`)
+  - `[x]` Implement `UserEntity`, `UserRole`, `AuthRepository`, UseCases (`LoginUseCase`, `RegisterUseCase`, `LogoutUseCase`)
+  - `[x]` Implement `UserModel`, `AuthRemoteDataSource`, `AuthRepositoryImpl`
+  - `[x]` Implement `AuthenticationCubit`, `LoginCubit` + `@freezed` state, and `RegisterCubit` + `@freezed` state
+  - `[x]` Build `LoginPage` (`pages/login_register/login/`) and `RegisterPage` (`pages/login_register/register/`)
+- `[x]` Phase 6: Attendance Feature Module (`features/attendance/`)
+  - `[x]` Implement `AttendanceEntity`, `GeoLocationEntity`, `AttendanceRepository`, UseCases
+  - `[x]` Implement `AttendanceModel`, `AttendanceLocalDataSource` (Drift), `AttendanceRemoteDataSource` (Firestore), `AttendanceRepositoryImpl` with auto-sync
+  - `[x]` Implement `UserHomeCubit` & `UserHistoryCubit`
+  - `[x]` Build `UserHomePage` (`pages/home/`) and `UserHistoryPage` (`pages/history/`)
+- `[x]` Phase 7: Admin Feature Module (`features/admin/`)
+  - `[x]` Implement `DashboardSummaryEntity`, `AdminRepository`, UseCases
+  - `[x]` Implement `DashboardSummaryModel`, `AdminRemoteDataSource`, `AdminRepositoryImpl`
+  - `[x]` Implement `AdminDashboardCubit`, `UsersListCubit`, `AdminHistoryCubit`
+  - `[x]` Build `AdminDashboardPage`, `UsersListPage` (search & pagination), `AdminHistoryPage` (filter)
+- `[x]` Phase 8: Firestore Security Rules & Project Finalization
+  - `[x]` Write `firestore.rules` enforcing role permissions
+  - `[x]` Verify build across flavors, theme modes, offline sync, and screen navigation

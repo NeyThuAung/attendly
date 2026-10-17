@@ -1,0 +1,51 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "attendly-mobile",
+          "appId": "1:185270246643:android:c54ac8006c1c9dd3f76b86",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "attendly-mobile",
+          "appId": "1:185270246643:ios:813cb6dc32dc159df76b86",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "attendly-mobile",
+          "configurations": {
+            "android": "1:185270246643:android:c54ac8006c1c9dd3f76b86",
+            "ios": "1:185270246643:ios:e8d749224a6b94bbf76b86"
+          }
+        },
+        "lib/firebase_options_local.dart": {
+          "projectId": "attendly-local-mobile",
+          "configurations": {
+            "android": "1:269066141480:android:dce9cdabce8b21e770da1d",
+            "ios": "1:269066141480:ios:22a37a79590eed5870da1d"
+          }
+        },
+        "lib/firebase_options_staging.dart": {
+          "projectId": "attendly-staging-mobile",
+          "configurations": {
+            "android": "1:377689468986:android:a41b952a6eeeea35738503",
+            "ios": "1:377689468986:ios:8e59c5ce45f8dd4b738503"
+          }
+        },
+        "lib/firebase_options_prod.dart": {
+          "projectId": "attendly-mobile",
+          "configurations": {
+            "android": "1:185270246643:android:c54ac8006c1c9dd3f76b86",
+            "ios": "1:185270246643:ios:813cb6dc32dc159df76b86"
+          }
+        }
+      }
+    }
+  }
+}

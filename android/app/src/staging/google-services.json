@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "377689468986",
+    "project_id": "attendly-staging-mobile",
+    "storage_bucket": "attendly-staging-mobile.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:377689468986:android:a41b952a6eeeea35738503",
+        "android_client_info": {
+          "package_name": "com.neythuaung.attendly.staging"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAw6MiaQ-Icqy0vNti5jSEkiztdKs6o1Fc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
