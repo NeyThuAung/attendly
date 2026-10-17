@@ -13,6 +13,10 @@
 migrate_working_dir/
 DOCUMENTATION.md
 
+# IDE & Assistant Artifacts
+.artifacts/
+*.artifact.md
+
 # Freezed Generated Files
 *.freezed.dart
 
