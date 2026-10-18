@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -19,21 +21,39 @@ class UserHistoryCubit extends Cubit<UserHistoryState> {
   final GetUserHistoryUseCase _getUserHistoryUseCase;
   final ISnackShower _snackShower;
 
+  StreamSubscription<AuthenticationState>? _authSubscription;
+
   UserHistoryCubit(
     this._auth,
     this._getUserHistoryUseCase,
     this._snackShower,
   ) : super(const UserHistoryState.initial()) {
+    _listenToAuth();
     loadHistory();
   }
 
-  Future<void> loadHistory() async {
+  void _listenToAuth() {
+    _authSubscription?.cancel();
+    _authSubscription = _auth.stream.listen((authState) {
+      if (authState is Authenticated) {
+        loadHistory();
+      } else if (authState is AuthenticationUnauthenticated) {
+        emit(const UserHistoryState.initial());
+      }
+    });
+  }
+
+  Future<void> initiate() async {
+    await loadHistory(showLoading: true);
+  }
+
+  Future<void> loadHistory({bool showLoading = true}) async {
     UserEntity? user = _auth.currentUser;
 
     if (user == null) {
       final authState = _auth.state;
       if (authState is AuthenticationLoading) {
-        emit(const UserHistoryState.loading());
+        if (showLoading) emit(const UserHistoryState.loading());
         await _auth.stream.firstWhere((s) => s is! AuthenticationLoading);
         user = _auth.currentUser;
       }
@@ -44,7 +64,7 @@ class UserHistoryCubit extends Cubit<UserHistoryState> {
       return;
     }
 
-    if (state is! UserHistoryReady) {
+    if (showLoading || state is! UserHistoryReady) {
       emit(const UserHistoryState.loading());
     }
 
@@ -73,5 +93,11 @@ class UserHistoryCubit extends Cubit<UserHistoryState> {
         }
         _snackShower.error(message: failure.reason);
       });
+  }
+
+  @override
+  Future<void> close() {
+    _authSubscription?.cancel();
+    return super.close();
   }
 }

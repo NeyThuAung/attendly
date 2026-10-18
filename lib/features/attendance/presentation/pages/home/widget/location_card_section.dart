@@ -151,10 +151,13 @@ class LocationCardSection extends StatelessWidget {
                     : Container(
                         color: const Color(0xFF031A38),
                         child: const Center(
-                          child: Icon(
-                            Icons.location_on,
-                            color: Color(0xFF1E88E5),
-                            size: 36,
+                          child: SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Color(0xFF1E88E5),
+                            ),
                           ),
                         ),
                       ),
@@ -164,14 +167,31 @@ class LocationCardSection extends StatelessWidget {
             const SizedBox(height: 12),
 
             /// Address Bold Text
-            Text(
-              location?.address.isNotEmpty == true
-                  ? location!.address
-                  : 'Fetching location address...',
-              style: context.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-              ),
+            Row(
+              children: [
+                if (location == null) ...[
+                  SizedBox(
+                    width: 14,
+                    height: 14,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: $styles.color.clrPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                ],
+                Expanded(
+                  child: Text(
+                    location?.address.isNotEmpty == true
+                        ? location!.address
+                        : 'Fetching location address...',
+                    style: context.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ],
             ),
 
             const SizedBox(height: 2),

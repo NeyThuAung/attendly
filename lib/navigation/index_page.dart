@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../di/injector.dart';
+import '../features/admin/presentation/pages/dashboard/cubit/admin_dashboard_cubit.dart';
+import '../features/admin/presentation/pages/user_history/cubit/admin_history_cubit.dart';
+import '../features/admin/presentation/pages/users_list/cubit/users_list_cubit.dart';
+import '../features/attendance/presentation/pages/history/cubit/user_history_cubit.dart';
+import '../features/attendance/presentation/pages/home/cubit/home_page_cubit.dart';
 import '../features/auth/domain/entity/user_entity.dart';
 import '../features/auth/presentation/cubit/authentication_cubit.dart';
 import '../features/auth/presentation/pages/profile/profile_page.dart';
@@ -111,13 +117,32 @@ class IndexPage extends StatelessWidget {
             index: index,
             children: pages,
           ),
-          bottomNavigationBar: ModernBottomNavBar(
-            currentIndex: index,
-            items: navItems,
-            onTap: (newIndex) {
-              currentIndex.value = newIndex;
-              lastTab = newIndex;
-              onIndexChanged?.call(newIndex);
+          bottomNavigationBar: Builder(
+            builder: (context) {
+              return ModernBottomNavBar(
+                currentIndex: index,
+                items: navItems,
+                onTap: (newIndex) {
+                  if (userRole == UserRole.admin) {
+                    if (newIndex == 0) context.read<AdminDashboardCubit>().loadSummary(forceReload: true);
+                    if (newIndex == 1) context.read<UsersListCubit>().searchUsers(forceReload: true);
+                    if (newIndex == 2) context.read<AdminHistoryCubit>().init(forceReload: true);
+                  } else {
+                    if (newIndex == 0) {
+                      final cubit = context.read<HomePageCubit>();
+                      cubit.fetchLastAttendanceStatus();
+                      if (cubit.state.currentLocation == null) {
+                        cubit.fetchLocationAndStatus();
+                      }
+                    }
+                    if (newIndex == 1) context.read<UserHistoryCubit>().loadHistory(showLoading: true);
+                  }
+
+                  currentIndex.value = newIndex;
+                  lastTab = newIndex;
+                  onIndexChanged?.call(newIndex);
+                },
+              );
             },
           ),
         );

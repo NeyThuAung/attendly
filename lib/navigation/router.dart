@@ -5,6 +5,11 @@ import 'package:injectable/injectable.dart';
 
 import '../core/services/snack_shower.dart';
 import '../di/injector.dart';
+import '../features/admin/presentation/pages/dashboard/cubit/admin_dashboard_cubit.dart';
+import '../features/admin/presentation/pages/user_history/cubit/admin_history_cubit.dart';
+import '../features/admin/presentation/pages/users_list/cubit/users_list_cubit.dart';
+import '../features/attendance/presentation/pages/history/cubit/user_history_cubit.dart';
+import '../features/attendance/presentation/pages/home/cubit/home_page_cubit.dart';
 import '../features/auth/presentation/cubit/authentication_cubit.dart';
 import '../features/auth/presentation/cubit/authentication_state.dart';
 import '../features/auth/presentation/pages/login_register/login/cubit/login_cubit.dart';
@@ -67,12 +72,31 @@ class NavigationRouter {
           final tabIndex =
               int.tryParse(state.uri.queryParameters['tab'] ?? '') ?? 0;
 
-          return IndexPage(
-            initialTab: tabIndex,
-            onIndexChanged: (index) => _currentIndex = index,
-            indexCallback: (useIndexPageNavigator) {
-              _useIndexPageNavigator = useIndexPageNavigator;
-            },
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider<HomePageCubit>(
+                create: (_) => inject<HomePageCubit>()..initiate(),
+              ),
+              BlocProvider<UserHistoryCubit>(
+                create: (_) => inject<UserHistoryCubit>(),
+              ),
+              BlocProvider<AdminDashboardCubit>(
+                create: (_) => inject<AdminDashboardCubit>()..loadSummary(),
+              ),
+              BlocProvider<UsersListCubit>(
+                create: (_) => inject<UsersListCubit>(),
+              ),
+              BlocProvider<AdminHistoryCubit>(
+                create: (_) => inject<AdminHistoryCubit>(),
+              ),
+            ],
+            child: IndexPage(
+              initialTab: tabIndex,
+              onIndexChanged: (index) => _currentIndex = index,
+              indexCallback: (useIndexPageNavigator) {
+                _useIndexPageNavigator = useIndexPageNavigator;
+              },
+            ),
           );
         },
         routes: [

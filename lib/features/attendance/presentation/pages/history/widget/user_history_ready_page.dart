@@ -69,7 +69,7 @@ class _UserHistoryReadyPageState extends State<UserHistoryReadyPage>
         CupertinoSliverRefreshControl(
           refreshTriggerPullDistance: 100,
           refreshIndicatorExtent: 60,
-          onRefresh: () async => context.read<UserHistoryCubit>().loadHistory(),
+          onRefresh: () async => context.read<UserHistoryCubit>().loadHistory(showLoading: false),
         ),
         SliverPadding(
           padding: EdgeInsets.fromLTRB(

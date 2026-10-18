@@ -33,6 +33,7 @@ class HomePageCubit extends Cubit<HomeState> {
   final ISnackShower _snackShower;
 
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+  StreamSubscription<AuthenticationState>? _authSubscription;
   Timer? _liveClockTimer;
 
   HomePageCubit(
@@ -48,13 +49,42 @@ class HomePageCubit extends Cubit<HomeState> {
     init();
   }
 
+  Future<void> initiate() async {
+    emit(const HomeState.initial(isLoading: true));
+    await syncOffline();
+    await fetchLastAttendanceStatus();
+    await checkConnectivityAndUnsynced();
+    await fetchLocationAndStatus();
+  }
+
   void init() async {
+    _listenToAuth();
     await syncOffline();
     await fetchLastAttendanceStatus();
     await checkConnectivityAndUnsynced();
     await fetchLocationAndStatus();
     _startLiveClock();
     _listenToConnectivity();
+  }
+
+  void _listenToAuth() {
+    _authSubscription?.cancel();
+    _authSubscription = _auth.stream.listen((authState) {
+      if (authState is Authenticated) {
+        syncOffline();
+        fetchLastAttendanceStatus();
+        fetchLocationAndStatus();
+      } else if (authState is AuthenticationUnauthenticated) {
+        _liveClockTimer?.cancel();
+        emit(const HomeState.initial(
+          isLoading: false,
+          isCheckedIn: false,
+          lastLog: null,
+          checkInTime: null,
+          elapsedSeconds: 0,
+        ));
+      }
+    });
   }
 
   void _startLiveClock() {
@@ -65,7 +95,7 @@ class HomePageCubit extends Cubit<HomeState> {
         final elapsed = DateTime.now().difference(state.checkInTime!).inSeconds;
         emit(state.copyWith(elapsedSeconds: elapsed));
       } else {
-        emit(state.copyWith());
+        emit(state.copyWith(elapsedSeconds: 0));
       }
     });
   }
@@ -94,21 +124,52 @@ class HomePageCubit extends Cubit<HomeState> {
       }
     }
 
-    if (user == null) return;
+    if (user == null) {
+      emit(state.copyWith(
+        isCheckedIn: false,
+        lastLog: null,
+        checkInTime: null,
+        elapsedSeconds: 0,
+      ));
+      return;
+    }
 
     final res = await _getLastAttendanceLogUseCase.call(user.uid);
     if (isClosed) return;
 
-    res.onSuccess((lastLog) {
-      if (lastLog == null) return;
+    res
+      ..onSuccess((lastLog) {
+        if (lastLog == null) {
+          emit(state.copyWith(
+            isCheckedIn: false,
+            lastLog: null,
+            checkInTime: null,
+            elapsedSeconds: 0,
+          ));
+          return;
+        }
 
-      final isCheckedIn = lastLog.type == AttendanceType.checkIn;
-      emit(state.copyWith(
-        isCheckedIn: isCheckedIn,
-        lastLog: lastLog,
-        checkInTime: isCheckedIn ? lastLog.timestamp : null,
-      ));
-    });
+        final isCheckedIn = lastLog.type == AttendanceType.checkIn;
+        final checkInTime = isCheckedIn ? lastLog.timestamp : null;
+        final elapsed = (isCheckedIn && checkInTime != null)
+            ? DateTime.now().difference(checkInTime).inSeconds
+            : 0;
+
+        emit(state.copyWith(
+          isCheckedIn: isCheckedIn,
+          lastLog: lastLog,
+          checkInTime: checkInTime,
+          elapsedSeconds: elapsed,
+        ));
+      })
+      ..onError((_) {
+        emit(state.copyWith(
+          isCheckedIn: false,
+          lastLog: null,
+          checkInTime: null,
+          elapsedSeconds: 0,
+        ));
+      });
   }
 
   void _listenToConnectivity() {
@@ -129,8 +190,6 @@ class HomePageCubit extends Cubit<HomeState> {
   }
 
   Future<void> fetchLocationAndStatus() async {
-    emit(state.copyWith(isLoading: true));
-
     final isGpsEnabled = await Geolocator.isLocationServiceEnabled();
     final permission = await Geolocator.checkPermission();
 
@@ -234,6 +293,7 @@ class HomePageCubit extends Cubit<HomeState> {
   Future<void> close() {
     _liveClockTimer?.cancel();
     _connectivitySubscription?.cancel();
+    _authSubscription?.cancel();
     return super.close();
   }
 }
